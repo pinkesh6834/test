@@ -1,0 +1,17 @@
+# Enable WinRM
+winrm quickconfig -force
+
+# Set the WinRM service to start automatically
+Set-Service WinRM -StartupType Automatic
+
+# Allow basic authentication (for Ansible)
+winrm set winrm/config/service/auth '@{Basic="true"}'
+
+# Allow unencrypted communication (for Ansible)
+winrm set winrm/config/service '@{AllowUnencrypted="true"}'
+
+# Set the listener to accept connections from any IP address
+winrm create winrm/config/Listener?Address=*+Transport=HTTP
+
+# Configure the firewall to allow WinRM traffic
+New-NetFirewallRule -DisplayName "Allow WinRM over HTTP" -Direction Inbound -Action Allow -Protocol TCP -LocalPort 5985
